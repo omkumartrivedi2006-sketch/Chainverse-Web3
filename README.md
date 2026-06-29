@@ -115,3 +115,9 @@ The **Concepts** page features a side-by-side comparison between the centralized
 The **Home** page serves as the entry point to the Web3 World. It features a stunning hero section with a floating animated chain of glowing blocks, introducing users to the core mission of ChainVerse: exploring the open internet and decentralized identity.
 
 ![Home Page Overview](assets/home_page.jpg)
+
+### 3. Live Crypto Prices
+
+The **Live Prices** dashboard provides real-time data for major cryptocurrencies like Bitcoin, Ethereum, Solana, and Polygon. It integrates with the CoinGecko API to show live price updates, 24-hour changes, and status indicators in elegant glassmorphism cards.
+
+![Live Crypto Prices](assets/live_prices.png)
