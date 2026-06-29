@@ -1,5 +1,5 @@
 /* ========================================
-   CHAINVERSE — SHARED NAV + PARTICLES
+   CHAINVERSE — SHARED NAV + PARTICLES + 3D
    Loaded on every page.
    ======================================== */
 
@@ -13,7 +13,7 @@
         <span class="brand-text">ChainVerse</span>
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="6" x2="21" y2="6"/>
           <line x1="3" y1="12" x2="21" y2="12"/>
           <line x1="3" y1="18" x2="21" y2="18"/>
@@ -33,9 +33,7 @@
 
   document.body.insertAdjacentHTML('afterbegin', BG_HTML);
 
-  // Find a target to inject nav at the very top
-  const firstChild = document.body.firstElementNode || document.body.firstElementChild;
-  // We inserted BG_HTML above; insert nav AFTER the bg elements
+  // Insert nav at the top
   document.body.insertAdjacentHTML('afterbegin', NAV_HTML);
 
   // ---------- 2. HIGHLIGHT ACTIVE LINK ----------
@@ -56,7 +54,7 @@
 
   // ---------- 4. RIPPLE EFFECT ON BUTTONS ----------
   document.addEventListener('click', e => {
-    const btn = e.target.closest('.btn');
+    const btn = e.target.closest('.btn, .mine-btn, .refresh-btn');
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
@@ -78,15 +76,67 @@
         io.unobserve(en.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // ---------- 6. PARTICLE CANVAS (shared, lightweight) ----------
+  // ---------- 6. 3D CARD TILT + GLARE EFFECT (EVENT DELEGATION) ----------
+  document.addEventListener('mousemove', e => {
+    const card = e.target.closest('.glass, .vs-col, .block-card, .price-card, .key-pill, .flip-face');
+    if (!card) return;
+
+    // Skip tilt on active mining block to avoid visual jittering
+    if (card.classList.contains('block-card') && card.querySelector('.block-status.mining')) return;
+
+    // Ensure glare element exists
+    let glare = card.querySelector('.card-glare');
+    if (!glare) {
+      glare = document.createElement('div');
+      glare.className = 'card-glare';
+      card.appendChild(glare);
+    }
+
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const w = rect.width;
+    const h = rect.height;
+
+    // Subtle professional tilt (max 8 degrees)
+    const rx = -8 * ((y - h / 2) / (h / 2));
+    const ry = 8 * ((x - w / 2) / (w / 2));
+
+    card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.015, 1.015, 1.015)`;
+    card.style.transition = 'transform 0.1s ease-out, box-shadow 0.25s ease, border-color 0.25s ease';
+
+    // Update glare position & opacity
+    const px = (x / w) * 100;
+    const py = (y / h) * 100;
+    glare.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255, 255, 255, 0.08) 0%, transparent 65%)`;
+    glare.style.opacity = '1';
+  });
+
+  document.addEventListener('mouseout', e => {
+    const card = e.target.closest('.glass, .vs-col, .block-card, .price-card, .key-pill, .flip-face');
+    if (!card) return;
+
+    const related = e.relatedTarget;
+    if (related && card.contains(related)) return;
+
+    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    card.style.transition = 'transform 0.4s ease-out, box-shadow 0.3s ease, border-color 0.3s ease';
+    
+    const glare = card.querySelector('.card-glare');
+    if (glare) {
+      glare.style.opacity = '0';
+    }
+  });
+
+  // ---------- 7. PARTICLE CANVAS (minimal, clean) ----------
   const canvas = document.getElementById('particles');
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let w, h, particles;
-    const COUNT = window.innerWidth < 700 ? 40 : 90;
+    const COUNT = window.innerWidth < 700 ? 30 : 60;
 
     function resize() {
       w = canvas.width  = window.innerWidth;
@@ -94,10 +144,10 @@
       particles = Array.from({ length: COUNT }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.6 + 0.6,
-        c: Math.random() > 0.6 ? '#21e6ff' : '#8a5cff'
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        r: Math.random() * 1.2 + 0.5,
+        c: Math.random() > 0.6 ? 'rgba(6, 182, 212, 0.4)' : 'rgba(99, 102, 241, 0.4)'
       }));
     }
     function step() {
@@ -110,7 +160,7 @@
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = p.c;
         ctx.shadowColor = p.c;
-        ctx.shadowBlur  = 10;
+        ctx.shadowBlur  = 6;
         ctx.fill();
       }
       // connecting lines
@@ -119,12 +169,12 @@
           const a = particles[i], b = particles[j];
           const dx = a.x - b.x, dy = a.y - b.y;
           const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < 140) {
+          if (d < 160) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(138,92,255,${0.12 * (1 - d / 140)})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.05 * (1 - d / 160)})`;
+            ctx.lineWidth = 0.5;
             ctx.shadowBlur = 0;
             ctx.stroke();
           }
@@ -137,14 +187,14 @@
     step();
   }
 
-  // ---------- 7. ANIMATED NUMBER COUNTER HELPER ----------
+  // ---------- 8. ANIMATED NUMBER COUNTER HELPER ----------
   window.cvCount = function (el, target, duration = 1600, suffix = '') {
     const start = 0;
     const t0 = performance.now();
     function frame(t) {
       const p = Math.min(1, (t - t0) / duration);
-      const eased = 1 - Math.pow(1 - p, 3);
-      const v = Math.floor(start + (target - start) * eased);
+      const colorProgress = 1 - Math.pow(1 - p, 3);
+      const v = Math.floor(start + (target - start) * colorProgress);
       el.textContent = v.toLocaleString() + suffix;
       if (p < 1) requestAnimationFrame(frame);
       else el.textContent = target.toLocaleString() + suffix;

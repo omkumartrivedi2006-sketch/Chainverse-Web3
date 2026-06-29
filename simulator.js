@@ -188,7 +188,7 @@
     window.addEventListener('resize', resize);
 
     let brokenTimeout = null;
-    const baseColor = () => block1FinalHash && block2FinalHash ? '#21e6ff' : '#8a5cff';
+    const baseColor = () => block1FinalHash && block2FinalHash ? '#06b6d4' : '#6366f1';
     function draw() {
       const w = c.clientWidth, h = c.clientHeight;
       ctx.clearRect(0, 0, w, h);
@@ -203,10 +203,10 @@
         const x0 = pad + i * linkW;
         const x1 = x0 + linkW * 0.55;
         ctx.strokeStyle = baseColor();
-        ctx.lineWidth   = 6;
+        ctx.lineWidth   = 4;
         ctx.lineCap     = 'round';
         ctx.shadowColor = baseColor();
-        ctx.shadowBlur  = 14;
+        ctx.shadowBlur  = 8;
         ctx.beginPath();
         ctx.moveTo(x0, cy);
         ctx.lineTo(x1, cy);
@@ -215,19 +215,18 @@
         ctx.shadowBlur  = 0;
         ctx.fillStyle   = '#fff';
         ctx.beginPath();
-        ctx.arc(x0 + ((x1 - x0) * ((t + i * 0.18) % 1)), cy, 3, 0, Math.PI * 2);
+        ctx.arc(x0 + ((x1 - x0) * ((t + i * 0.18) % 1)), cy, 2, 0, Math.PI * 2);
         ctx.fill();
       }
 
       // shards when broken
       if (block1FinalHash && !block2FinalHash && data1.value) {
-        // minor "sparks" effect
         for (let i = 0; i < 14; i++) {
-          ctx.fillStyle = 'rgba(255,77,109,' + (0.2 + Math.random() * 0.3) + ')';
-          ctx.shadowColor = '#ff4d6d';
-          ctx.shadowBlur  = 8;
+          ctx.fillStyle = 'rgba(239,68,68,' + (0.2 + Math.random() * 0.3) + ')';
+          ctx.shadowColor = '#ef4444';
+          ctx.shadowBlur  = 6;
           ctx.beginPath();
-          ctx.arc(Math.random() * w, cy + (Math.random() - 0.5) * 30, 1.5, 0, Math.PI * 2);
+          ctx.arc(Math.random() * w, cy + (Math.random() - 0.5) * 20, 1.2, 0, Math.PI * 2);
           ctx.fill();
         }
       }

@@ -10,29 +10,29 @@
   <script src="nav.js" defer></script>
   <style>
     /* ---------- CONCEPTS PAGE ---------- */
-    .c-hero { padding: 100px 0 40px; }
+    .c-hero { padding: 80px 0 30px; text-align: center; }
     .c-hero h1 {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(34px, 5vw, 54px);
-      font-weight: 700;
-      line-height: 1.1;
-      margin-bottom: 14px;
+      font-size: clamp(30px, 4.5vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
     }
     .c-hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .c-hero p { color: var(--muted); font-size: 16px; max-width: 720px; }
+    .c-hero p { color: var(--muted); font-size: 15px; max-width: 680px; margin: 0 auto; line-height: 1.6; }
 
-    .concept-grid { display: grid; gap: 28px; }
+    .concept-grid { display: grid; gap: 24px; }
 
     /* FLIP CARDS */
     .flip-card {
       perspective: 1200px;
-      height: 320px;
+      height: 330px;
       cursor: pointer;
     }
     .flip-inner {
       position: relative;
       width: 100%; height: 100%;
-      transition: transform .8s cubic-bezier(.22,.61,.36,1);
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
       transform-style: preserve-3d;
     }
     .flip-card:hover .flip-inner,
@@ -44,10 +44,10 @@
       border-radius: var(--radius);
       background: var(--panel);
       border: 1px solid var(--panel-border);
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      backdrop-filter: blur(24px) saturate(120%);
+      -webkit-backdrop-filter: blur(24px) saturate(120%);
       box-shadow: var(--shadow-card);
-      padding: 28px;
+      padding: 24px;
       display: flex; flex-direction: column;
       overflow: hidden;
     }
@@ -55,36 +55,37 @@
       content: "";
       position: absolute; inset: 0;
       border-radius: inherit; padding: 1px;
-      background: linear-gradient(135deg, rgba(138,92,255,0.5), rgba(33,230,255,0.3), transparent 70%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02), transparent 70%);
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
               mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude;
       pointer-events: none;
     }
     .flip-back { transform: rotateY(180deg); }
-    .flip-face h3 { font-family: 'Space Grotesk'; font-size: 22px; margin-bottom: 12px; }
-    .flip-face .tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
-    .flip-face .lead { color: var(--text); font-size: 14.5px; margin-bottom: 14px; line-height: 1.55; }
-    .flip-face ul { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .flip-face ul li { color: var(--muted); font-size: 13.5px; line-height: 1.5; padding-left: 18px; position: relative; }
+    .flip-face h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .flip-face .tag { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; font-weight: 600; }
+    .flip-face .lead { color: var(--text); font-size: 13.5px; margin-bottom: 12px; line-height: 1.5; }
+    .flip-face ul { list-style: none; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .flip-face ul li { color: var(--muted); font-size: 12.5px; line-height: 1.4; padding-left: 14px; position: relative; }
     .flip-face ul li::before {
-      content: "▸"; position: absolute; left: 0; top: 0;
+      content: "•"; position: absolute; left: 0; top: 0;
       color: var(--violet); font-weight: 700;
     }
     .flip-face .flip-icon {
-      width: 48px; height: 48px;
-      border-radius: 12px;
+      width: 40px; height: 40px;
+      border-radius: 8px;
       display: grid; place-items: center;
-      background: linear-gradient(135deg, rgba(138,92,255,0.25), rgba(33,230,255,0.10));
+      background: rgba(255, 255, 255, 0.03);
       color: var(--cyan);
-      font-size: 20px;
-      margin-bottom: 16px;
+      font-size: 16px;
+      margin-bottom: 12px;
       box-shadow: inset 0 0 0 1px var(--panel-border);
     }
     .flip-hint {
-      position: absolute; bottom: 14px; right: 18px;
-      font-size: 11px; color: var(--muted);
-      letter-spacing: 1.5px; text-transform: uppercase;
+      position: absolute; bottom: 12px; right: 16px;
+      font-size: 10px; color: var(--muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      font-weight: 500;
     }
 
     /* SIDE-BY-SIDE COMPARISON */
@@ -94,32 +95,35 @@
     }
     @media (max-width: 800px) { .compare { grid-template-columns: 1fr; } }
     .vs-col {
-      padding: 28px;
+      padding: 24px;
       background: var(--panel);
       border: 1px solid var(--panel-border);
       border-radius: var(--radius);
-      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       display: flex; flex-direction: column;
-      transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+      transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
+      transform-style: preserve-3d;
+      position: relative;
+      overflow: hidden;
     }
-    .vs-col:hover { transform: translateY(-4px); border-color: rgba(138,92,255,0.4); box-shadow: 0 0 50px rgba(138,92,255,0.18); }
-    .vs-col.web2 { border-top: 3px solid var(--muted); }
-    .vs-col.web3 { border-top: 3px solid var(--cyan); box-shadow: 0 0 30px rgba(33,230,255,0.10); }
-    .vs-col h4 { font-family: 'Space Grotesk'; font-size: 22px; margin-bottom: 14px; }
+    .vs-col:hover { border-color: rgba(255, 255, 255, 0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+    .vs-col.web2 { border-top: 2px solid var(--muted); }
+    .vs-col.web3 { border-top: 2px solid var(--cyan); }
+    .vs-col h4 { font-size: 18px; margin-bottom: 12px; font-weight: 600; }
     .vs-col.web2 h4 i { color: var(--muted); }
     .vs-col.web3 h4 i { color: var(--cyan); }
     .vs-divider {
       display: grid; place-items: center;
-      padding: 0 14px;
+      padding: 0 10px;
     }
     .vs-divider span {
-      width: 44px; height: 44px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       display: grid; place-items: center;
       background: var(--grad);
-      color: #06070d; font-weight: 800;
-      box-shadow: var(--glow-violet);
-      font-size: 13px;
+      color: #08090d; font-weight: 800;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      font-size: 12px;
     }
 
     /* KEY DIAGRAM */
@@ -128,38 +132,43 @@
     }
     @media (max-width: 800px) { .key-diagram { grid-template-columns: 1fr; } }
     .key-pill {
-      padding: 22px;
+      padding: 20px;
       border-radius: var(--radius);
       background: var(--panel);
       border: 1px solid var(--panel-border);
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(24px);
       text-align: center;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .key-pill.public { border-color: rgba(33,230,255,0.55); box-shadow: 0 0 30px rgba(33,230,255,0.10); }
-    .key-pill.private { border-color: rgba(255,77,210,0.45); box-shadow: 0 0 30px rgba(255,77,210,0.10); }
-    .key-pill h4 { font-family: 'Space Grotesk'; font-size: 18px; margin-bottom: 8px; }
+    .key-pill:hover { border-color: rgba(255, 255, 255, 0.15); }
+    .key-pill.public { border-color: rgba(6, 182, 212, 0.25); }
+    .key-pill.private { border-color: rgba(236, 72, 153, 0.25); }
+    .key-pill h4 { font-size: 16px; margin-bottom: 6px; font-weight: 600; }
     .key-pill .hashcode {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--cyan);
-      background: rgba(0,0,0,0.3);
-      padding: 10px 12px;
-      border-radius: 10px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 10px;
+      border-radius: 6px;
       word-break: break-all;
-      margin: 14px 0;
+      margin: 12px 0;
+      border: 1px solid rgba(255,255,255,0.03);
     }
     .key-pill.private .hashcode { color: var(--pink); }
     .key-arrow {
       display: grid; place-items: center;
-      font-size: 30px; color: var(--violet);
+      font-size: 24px; color: var(--violet);
       animation: arrowFlick 1.6s ease-in-out infinite;
     }
     @keyframes arrowFlick {
       0%,100% { transform: translateX(0); opacity: 1; }
-      50%     { transform: translateX(6px); opacity: 0.6; }
+      50%     { transform: translateX(4px); opacity: 0.6; }
     }
 
-    /* COMPARISON TABLE (ETH vs BTC) */
+    /* COMPARISON TABLE */
     .compare-table {
       width: 100%;
       border-collapse: separate;
@@ -168,42 +177,42 @@
       border: 1px solid var(--panel-border);
       border-radius: var(--radius);
       overflow: hidden;
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(24px);
     }
     .compare-table th, .compare-table td {
-      padding: 18px 20px;
+      padding: 14px 18px;
       text-align: left;
-      font-size: 14.5px;
+      font-size: 13.5px;
       border-bottom: 1px solid var(--panel-border);
     }
     .compare-table th {
-      font-family: 'Space Grotesk';
-      background: linear-gradient(135deg, rgba(138,92,255,0.18), rgba(33,230,255,0.10));
+      background: rgba(255,255,255,0.02);
       color: var(--text);
-      font-size: 16px;
-      letter-spacing: 0.5px;
+      font-size: 14.5px;
+      font-weight: 600;
     }
     .compare-table tr:last-child td { border-bottom: none; }
-    .compare-table tr:hover td { background: rgba(138,92,255,0.06); }
-    .compare-table .eth-row i { color: var(--cyan); margin-right: 8px; }
-    .compare-table .btc-row i { color: #f7931a; margin-right: 8px; }
+    .compare-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+    .compare-table .eth-row i { color: var(--cyan); margin-right: 6px; }
+    .compare-table .btc-row i { color: #f7931a; margin-right: 6px; }
     .coin-badge {
-      display: inline-flex; align-items: center; gap: 8px;
+      display: inline-flex; align-items: center; gap: 6px;
       font-weight: 600;
     }
 
     @media (max-width: 700px) {
-      .compare-table th, .compare-table td { padding: 12px; font-size: 13px; }
+      .compare-table th, .compare-table td { padding: 10px; font-size: 12.5px; }
     }
 
-    .concept-section { padding: 80px 0; }
+    .concept-section { padding: 60px 0; }
     .concept-section h2 {
-      font-family: 'Space Grotesk';
-      font-size: clamp(26px, 3.5vw, 36px);
-      margin-bottom: 8px;
+      font-size: clamp(22px, 3vw, 28px);
+      margin-bottom: 6px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
     .concept-section h2 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .concept-section .lead { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+    .concept-section .lead { color: var(--muted); margin-bottom: 24px; font-size: 14px; }
   </style>
 </head>
 <body>
