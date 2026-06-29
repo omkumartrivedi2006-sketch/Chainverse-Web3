@@ -97,3 +97,15 @@ Built with ♥ by **Ch Manoj**.
 Batch: **Arbitrum Builder Labs · LamprosDAO**.
 
 > Learn the primitives. Build the future.
+
+---
+
+## Website Overview
+
+In this section, you can see a visual overview of the **ChainVerse** platform, showcasing the premium dark-futuristic UI and the interactive learning components.
+
+### 1. Web2 vs Web3 Comparison (Concepts Page)
+
+The **Concepts** page features a side-by-side comparison between the centralized Web2 model and the decentralized Web3 evolution. It highlights key shifts in ownership, identity, and data control using a clean, high-contrast visual layout.
+
+![Web2 vs Web3 Comparison](assets/concepts_comparison.png)
