@@ -109,3 +109,9 @@ In this section, you can see a visual overview of the **ChainVerse** platform, s
 The **Concepts** page features a side-by-side comparison between the centralized Web2 model and the decentralized Web3 evolution. It highlights key shifts in ownership, identity, and data control using a clean, high-contrast visual layout.
 
 ![Web2 vs Web3 Comparison](assets/concepts_comparison.png)
+
+### 2. Home Page / Landing
+
+The **Home** page serves as the entry point to the Web3 World. It features a stunning hero section with a floating animated chain of glowing blocks, introducing users to the core mission of ChainVerse: exploring the open internet and decentralized identity.
+
+![Home Page Overview](assets/home_page.jpg)
