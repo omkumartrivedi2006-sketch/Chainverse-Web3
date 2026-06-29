@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Concepts — ChainVerse</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%238a5cff'/><stop offset='1' stop-color='%2321e6ff'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><text x='32' y='44' font-family='Space Grotesk' font-size='42' font-weight='800' text-anchor='middle' fill='%23050710'>C</text></svg>" />
+  <script src="nav.js" defer></script>
+  <style>
+    /* ---------- CONCEPTS PAGE ---------- */
+    .c-hero { padding: 100px 0 40px; }
+    .c-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 14px;
+    }
+    .c-hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .c-hero p { color: var(--muted); font-size: 16px; max-width: 720px; }
+
+    .concept-grid { display: grid; gap: 28px; }
+
+    /* FLIP CARDS */
+    .flip-card {
+      perspective: 1200px;
+      height: 320px;
+      cursor: pointer;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transition: transform .8s cubic-bezier(.22,.61,.36,1);
+      transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-inner,
+    .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+    .flip-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      box-shadow: var(--shadow-card);
+      padding: 28px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .flip-face::before {
+      content: "";
+      position: absolute; inset: 0;
+      border-radius: inherit; padding: 1px;
+      background: linear-gradient(135deg, rgba(138,92,255,0.5), rgba(33,230,255,0.3), transparent 70%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+              mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude;
+      pointer-events: none;
+    }
+    .flip-back { transform: rotateY(180deg); }
+    .flip-face h3 { font-family: 'Space Grotesk'; font-size: 22px; margin-bottom: 12px; }
+    .flip-face .tag { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+    .flip-face .lead { color: var(--text); font-size: 14.5px; margin-bottom: 14px; line-height: 1.55; }
+    .flip-face ul { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .flip-face ul li { color: var(--muted); font-size: 13.5px; line-height: 1.5; padding-left: 18px; position: relative; }
+    .flip-face ul li::before {
+      content: "▸"; position: absolute; left: 0; top: 0;
+      color: var(--violet); font-weight: 700;
+    }
+    .flip-face .flip-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, rgba(138,92,255,0.25), rgba(33,230,255,0.10));
+      color: var(--cyan);
+      font-size: 20px;
+      margin-bottom: 16px;
+      box-shadow: inset 0 0 0 1px var(--panel-border);
+    }
+    .flip-hint {
+      position: absolute; bottom: 14px; right: 18px;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    /* SIDE-BY-SIDE COMPARISON */
+    .compare {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 0;
+      align-items: stretch;
+    }
+    @media (max-width: 800px) { .compare { grid-template-columns: 1fr; } }
+    .vs-col {
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      display: flex; flex-direction: column;
+      transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+    }
+    .vs-col:hover { transform: translateY(-4px); border-color: rgba(138,92,255,0.4); box-shadow: 0 0 50px rgba(138,92,255,0.18); }
+    .vs-col.web2 { border-top: 3px solid var(--muted); }
+    .vs-col.web3 { border-top: 3px solid var(--cyan); box-shadow: 0 0 30px rgba(33,230,255,0.10); }
+    .vs-col h4 { font-family: 'Space Grotesk'; font-size: 22px; margin-bottom: 14px; }
+    .vs-col.web2 h4 i { color: var(--muted); }
+    .vs-col.web3 h4 i { color: var(--cyan); }
+    .vs-divider {
+      display: grid; place-items: center;
+      padding: 0 14px;
+    }
+    .vs-divider span {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--grad);
+      color: #06070d; font-weight: 800;
+      box-shadow: var(--glow-violet);
+      font-size: 13px;
+    }
+
+    /* KEY DIAGRAM */
+    .key-diagram {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;
+    }
+    @media (max-width: 800px) { .key-diagram { grid-template-columns: 1fr; } }
+    .key-pill {
+      padding: 22px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(18px);
+      text-align: center;
+    }
+    .key-pill.public { border-color: rgba(33,230,255,0.55); box-shadow: 0 0 30px rgba(33,230,255,0.10); }
+    .key-pill.private { border-color: rgba(255,77,210,0.45); box-shadow: 0 0 30px rgba(255,77,210,0.10); }
+    .key-pill h4 { font-family: 'Space Grotesk'; font-size: 18px; margin-bottom: 8px; }
+    .key-pill .hashcode {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--cyan);
+      background: rgba(0,0,0,0.3);
+      padding: 10px 12px;
+      border-radius: 10px;
+      word-break: break-all;
+      margin: 14px 0;
+    }
+    .key-pill.private .hashcode { color: var(--pink); }
+    .key-arrow {
+      display: grid; place-items: center;
+      font-size: 30px; color: var(--violet);
+      animation: arrowFlick 1.6s ease-in-out infinite;
+    }
+    @keyframes arrowFlick {
+      0%,100% { transform: translateX(0); opacity: 1; }
+      50%     { transform: translateX(6px); opacity: 0.6; }
+    }
+
+    /* COMPARISON TABLE (ETH vs BTC) */
+    .compare-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+    }
+    .compare-table th, .compare-table td {
+      padding: 18px 20px;
+      text-align: left;
+      font-size: 14.5px;
+      border-bottom: 1px solid var(--panel-border);
+    }
+    .compare-table th {
+      font-family: 'Space Grotesk';
+      background: linear-gradient(135deg, rgba(138,92,255,0.18), rgba(33,230,255,0.10));
+      color: var(--text);
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: rgba(138,92,255,0.06); }
+    .compare-table .eth-row i { color: var(--cyan); margin-right: 8px; }
+    .compare-table .btc-row i { color: #f7931a; margin-right: 8px; }
+    .coin-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 700px) {
+      .compare-table th, .compare-table td { padding: 12px; font-size: 13px; }
+    }
+
+    .concept-section { padding: 80px 0; }
+    .concept-section h2 {
+      font-family: 'Space Grotesk';
+      font-size: clamp(26px, 3.5vw, 36px);
+      margin-bottom: 8px;
+    }
+    .concept-section h2 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .concept-section .lead { color: var(--muted); margin-bottom: 28px; font-size: 15px; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== 1) WEB2 vs WEB3 ===== -->
+  <header class="c-hero container">
+    <span class="eyebrow reveal">1 / Concepts</span>
+    <h1 class="reveal delay-1">From <span class="grad">Web2</span> to <span class="grad">Web3</span></h1>
+    <p class="reveal delay-2">A side-by-side look at how the internet evolves when ownership, identity and money move on-chain.</p>
+  </header>
+
+  <section class="concept-section container">
+    <div class="reveal compare">
+      <div class="vs-col web2">
+        <h4><i class="fa-solid fa-server"></i> Web2</h4>
+        <span class="tag" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:block;">Centralized</span>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#ff4d6d;">✕</span> Companies own your data</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#ff4d6d;">✕</span> Servers can go down or censor</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#ff4d6d;">✕</span> Payments routed through banks</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:#ff4d6d;">✕</span> Logins require permissions</li>
+        </ul>
+      </div>
+      <div class="vs-divider"><span>VS</span></div>
+      <div class="vs-col web3">
+        <h4><i class="fa-solid fa-globe"></i> Web3</h4>
+        <span class="tag" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:block;">Decentralized</span>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span> You own your data with a wallet</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span> Thousands of nodes keep it alive</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span> Peer-to-peer payments, global</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--green);">✓</span> Sign in with your key, not an email</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2) ETHEREUM vs BITCOIN ===== -->
+  <section class="concept-section container">
+    <h2 class="reveal"><span class="grad">Ethereum vs Bitcoin</span></h2>
+    <p class="lead reveal">Bitcoin pioneered digital money. Ethereum turned the blockchain into a global computer for any program.</p>
+
+    <div class="reveal" style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th><span class="coin-badge"><i class="fa-brands fa-bitcoin" style="color:#f7931a"></i> Bitcoin</span></th>
+            <th><span class="coin-badge"><i class="fa-brands fa-ethereum" style="color:#21e6ff"></i> Ethereum</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Primary Use</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-coins"></i> Digital money / store of value</td>
+            <td class="eth-row"><i class="fa-solid fa-code"></i> Smart contracts & dApps</td>
+          </tr>
+          <tr>
+            <td><strong>Launched</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-calendar"></i> 2009</td>
+            <td class="eth-row"><i class="fa-solid fa-calendar"></i> 2015</td>
+          </tr>
+          <tr>
+            <td><strong>Block Time</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-clock"></i> ~10 minutes</td>
+            <td class="eth-row"><i class="fa-solid fa-clock"></i> ~12 seconds</td>
+          </tr>
+          <tr>
+            <td><strong>Consensus</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-hammer"></i> Proof of Work</td>
+            <td class="eth-row"><i class="fa-solid fa-shield-halved"></i> Proof of Stake</td>
+          </tr>
+          <tr>
+            <td><strong>Supply Cap</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-lock"></i> 21 million BTC</td>
+            <td class="eth-row"><i class="fa-solid fa-infinity"></i> No hard cap (issuance low)</td>
+          </tr>
+          <tr>
+            <td><strong>Scripting</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-circle-xmark" style="color:#ff4d6d"></i> Limited</td>
+            <td class="eth-row"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> Turing-complete (Solidity, Vyper)</td>
+          </tr>
+          <tr>
+            <td><strong>Token Standard</strong></td>
+            <td class="btc-row"><i class="fa-solid fa-circle-xmark" style="color:#ff4d6d"></i> None</td>
+            <td class="eth-row"><i class="fa-solid fa-circle-check" style="color:var(--green)"></i> ERC-20, ERC-721, ERC-1155</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== 3) PUBLIC KEY vs PRIVATE KEY ===== -->
+  <section class="concept-section container">
+    <h2 class="reveal"><span class="grad">Public Key vs Private Key</span></h2>
+    <p class="lead reveal">Your wallet is a pair of cryptographic keys: a public one you share with the world, and a private one you guard for life.</p>
+
+    <div class="reveal key-diagram">
+      <div class="key-pill public">
+        <div style="font-size:28px; color:var(--cyan); margin-bottom:8px;"><i class="fa-solid fa-key"></i></div>
+        <h4 style="color:var(--cyan);">Public Key</h4>
+        <p style="color:var(--muted); font-size:13.5px;">Your wallet address. Safe to share — that's how people send you funds.</p>
+        <div class="hashcode">0x7a3F...bE21</div>
+        <p style="color:var(--muted); font-size:12px;"><i class="fa-solid fa-eye"></i> Visible to everyone</p>
+      </div>
+
+      <div class="key-arrow"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+
+      <div class="key-pill private">
+        <div style="font-size:28px; color:var(--pink); margin-bottom:8px;"><i class="fa-solid fa-lock"></i></div>
+        <h4 style="color:var(--pink);">Private Key</h4>
+        <p style="color:var(--muted); font-size:13.5px;">Your secret signature. Never share it. Whoever owns it owns the wallet.</p>
+        <div class="hashcode" style="color:var(--pink);">a91c2f...8dB7 ████</div>
+        <p style="color:var(--muted); font-size:12px;"><i class="fa-solid fa-user-shield"></i> Yours alone</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4) BLOCKCHAIN vs TRADITIONAL DB ===== -->
+  <section class="concept-section container">
+    <h2 class="reveal"><span class="grad">Blockchain vs Traditional Database</span></h2>
+    <p class="lead reveal">Same data, different trust model — one is owned and editable, the other is append-only and verifiable.</p>
+
+    <div class="reveal compare">
+      <div class="vs-col web2">
+        <h4><i class="fa-solid fa-database"></i> Traditional DB</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--violet);">●</span> Central administrator</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--violet);">●</span> Mutable — rows can be edited</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--violet);">●</span> Fast reads &amp; writes</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--violet);">●</span> Single source of truth</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--violet);">●</span> Trust the operator</li>
+        </ul>
+      </div>
+      <div class="vs-divider"><span>VS</span></div>
+      <div class="vs-col web3">
+        <h4><i class="fa-solid fa-link"></i> Blockchain</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--cyan);">●</span> No administrator — peer network</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--cyan);">●</span> Append-only — history is tamper-evident</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--cyan);">●</span> Slower, finality in seconds/minutes</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--cyan);">●</span> Thousands of identical copies</li>
+          <li style="color:var(--muted);font-size:13.5px;padding-left:16px;position:relative;"><span style="position:absolute;left:0;color:var(--cyan);">●</span> Trust the math &amp; consensus</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <footer class="footer container">
+    <p>Built with <span class="heart">♥</span> by <strong>Ch Manoj</strong> · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> · Batch: <strong>Arbitrum Builder Labs · LamprosDAO</strong></p>
+    <p style="margin-top:6px; font-size:12.5px; opacity:0.7;">ChainVerse © 2025 — A premium Web3 learning experience.</p>
+  </footer>
+
+  <!-- FLIP CARDS INSERTS (smaller caption-grid) -->
+  <section class="concept-section container">
+    <h2 class="reveal"><span class="grad">Tap to Flip the Cards</span></h2>
+    <p class="lead reveal">Hover any card to flip it. Front = the contrast, Back = what it means for you.</p>
+
+    <div class="concept-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+      <!-- FLIP 1 -->
+      <div class="flip-card reveal" tabindex="0">
+        <div class="flip-inner">
+          <div class="flip-face">
+            <div class="flip-icon"><i class="fa-solid fa-user-shield"></i></div>
+            <span class="tag">Identity</span>
+            <h3>Web2 Login</h3>
+            <p class="lead">Username + password stored on a company's server.</p>
+            <ul>
+              <li>Can be hacked or leaked in breaches</li>
+              <li>You can be locked out at any time</li>
+              <li>One identity per platform</li>
+            </ul>
+            <span class="flip-hint">Hover to flip →</span>
+          </div>
+          <div class="flip-face flip-back">
+            <div class="flip-icon"><i class="fa-solid fa-key"></i></div>
+            <span class="tag">Web3 Identity</span>
+            <h3>Wallet Sign-In</h3>
+            <p class="lead">One cryptographic key pair gives access to every app.</p>
+            <ul>
+              <li>No password to lose — math proves it's you</li>
+              <li>Portable identity across all dApps</li>
+              <li>You truly own your account</li>
+            </ul>
+            <span class="flip-hint">← Hover back</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP 2 -->
+      <div class="flip-card reveal delay-1" tabindex="0">
+        <div class="flip-inner">
+          <div class="flip-face">
+            <div class="flip-icon"><i class="fa-brands fa-bitcoin"></i></div>
+            <span class="tag">Bitcoin</span>
+            <h3>Money Memo</h3>
+            <p class="lead">Like digital gold — scarce, portable, censorship-resistant.</p>
+            <ul>
+              <li>21 million cap, ever</li>
+              <li>Settlement in ~60 minutes</li>
+              <li>Best for store-of-value narratives</li>
+            </ul>
+            <span class="flip-hint">Hover to flip →</span>
+          </div>
+          <div class="flip-face flip-back">
+            <div class="flip-icon"><i class="fa-brands fa-ethereum"></i></div>
+            <span class="tag">Ethereum</span>
+            <h3>World Computer</h3>
+            <p class="lead">A blockchain you can build any program on top of.</p>
+            <ul>
+              <li>Smart contracts handle logic</li>
+              <li>Tokens, NFTs, DeFi, DAOs</li>
+              <li>Settlement in ~12 seconds</li>
+            </ul>
+            <span class="flip-hint">← Hover back</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLIP 3 -->
+      <div class="flip-card reveal delay-2" tabindex="0">
+        <div class="flip-inner">
+          <div class="flip-face">
+            <div class="flip-icon"><i class="fa-solid fa-lock"></i></div>
+            <span class="tag">Private Key</span>
+            <h3>Your Secret</h3>
+            <p class="lead">A 64-hex-character password with infinite power.</p>
+            <ul>
+              <li>Signs every transaction</li>
+              <li>Lost key = lost funds, forever</li>
+              <li>Never type it on a website</li>
+            </ul>
+            <span class="flip-hint">Hover to flip →</span>
+          </div>
+          <div class="flip-face flip-back">
+            <div class="flip-icon"><i class="fa-solid fa-key"></i></div>
+            <span class="tag">Public Key</span>
+            <h3>Your Address</h3>
+            <p class="lead">Derived from the private key — share freely, lose nothing.</p>
+            <ul>
+              <li>Receives funds like an inbox</li>
+              <li>Verifies signatures you created</li>
+              <li>Safe to publish anywhere</li>
+            </ul>
+            <span class="flip-hint">← Hover back</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Click-to-flip for touch devices
+    document.querySelectorAll('.flip-card').forEach(c => {
+      c.addEventListener('click', () => c.classList.toggle('flipped'));
+    });
+  </script>
+</body>
+</html>

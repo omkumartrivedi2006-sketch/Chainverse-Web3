@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Block Simulator — ChainVerse</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%238a5cff'/><stop offset='1' stop-color='%2321e6ff'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><text x='32' y='44' font-family='Space Grotesk' font-size='42' font-weight='800' text-anchor='middle' fill='%23050710'>C</text></svg>" />
+  <script src="nav.js" defer></script>
+  <style>
+    /* ---------- SIMULATOR PAGE ---------- */
+    .s-hero { padding: 100px 0 30px; }
+    .s-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(34px, 5vw, 54px);
+      font-weight: 700; line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .s-hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .s-hero p { color: var(--muted); font-size: 16px; max-width: 720px; }
+
+    .sim-board {
+      display: grid;
+      grid-template-columns: 1fr 120px 1fr;
+      gap: 0;
+      align-items: stretch;
+      margin-top: 30px;
+    }
+    @media (max-width: 900px) {
+      .sim-board { grid-template-columns: 1fr; }
+      .chain-mid { display: none; }
+    }
+
+    .block-card {
+      padding: 28px;
+      display: flex; flex-direction: column; gap: 14px;
+      position: relative;
+      transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .35s var(--ease);
+    }
+    .block-card.shake { animation: shake .6s var(--ease); }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      15% { transform: translateX(-10px); }
+      30% { transform: translateX(10px); }
+      45% { transform: translateX(-8px); }
+      60% { transform: translateX(8px); }
+      75% { transform: translateX(-4px); }
+    }
+
+    .block-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px;
+    }
+    .block-title {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px; font-weight: 700;
+    }
+    .block-title .num-badge {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: grid; place-items: center;
+      background: var(--grad); color: #06070d; font-weight: 800;
+      font-size: 14px;
+    }
+    .block-status {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12.5px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .block-status.valid   { background: rgba(46,229,157,0.10); color: var(--green);  border: 1px solid rgba(46,229,157,0.40); }
+    .block-status.invalid { background: rgba(255,77,109,0.12); color: var(--red);    border: 1px solid rgba(255,77,109,0.40); }
+    .block-status.mining  { background: rgba(33,230,255,0.10); color: var(--cyan);   border: 1px solid rgba(33,230,255,0.40); }
+    .block-status.idle    { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--panel-border); }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 12px; color: var(--muted);
+      letter-spacing: 1.2px; text-transform: uppercase;
+      font-weight: 600;
+    }
+    .field input, .field textarea, .field .readonly {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.30);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      transition: border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+    }
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: rgba(138,92,255,0.6);
+      box-shadow: 0 0 0 3px rgba(138,92,255,0.15), 0 0 24px rgba(138,92,255,0.18);
+    }
+    .field .readonly {
+      color: var(--cyan);
+      word-break: break-all;
+      background: rgba(33,230,255,0.05);
+    }
+    .field .readonly.invalid { color: var(--red); background: rgba(255,77,109,0.06); }
+
+    .hash-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      word-break: break-all;
+      padding: 14px 16px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(138,92,255,0.10), rgba(33,230,255,0.04));
+      border: 1px dashed rgba(138,92,255,0.40);
+      color: #d9defc;
+      min-height: 52px;
+      line-height: 1.5;
+    }
+    .hash-display.empty { color: var(--muted); font-style: italic; }
+
+    /* CHAIN MIDDLE GRAPHIC */
+    .chain-mid {
+      position: relative;
+      display: grid; place-items: center;
+    }
+    .chain-mid canvas {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+    }
+    .chain-mid .chain-icon {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--grad);
+      color: #06070d; font-size: 22px;
+      box-shadow: var(--glow-violet);
+      z-index: 2;
+      animation: pulseChain 2.6s ease-in-out infinite;
+    }
+    @keyframes pulseChain {
+      0%,100% { transform: scale(1); box-shadow: 0 0 24px rgba(138,92,255,0.55); }
+      50%     { transform: scale(1.06); box-shadow: 0 0 48px rgba(33,230,255,0.75); }
+    }
+
+    .meta-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    @media (max-width: 600px) { .meta-row { grid-template-columns: 1fr; } }
+
+    .mine-btn {
+      width: 100%;
+      padding: 14px 20px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700; font-size: 15px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: var(--grad);
+      color: #06070d;
+      box-shadow: var(--glow-violet);
+      transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .mine-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 40px rgba(138,92,255,0.7); }
+    .mine-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .nonce-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px; font-weight: 700;
+      color: var(--cyan);
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    /* BROKEN CHAIN OVERLAY */
+    .chain-broken-overlay {
+      position: fixed; inset: 0;
+      background: rgba(255,77,109,0.12);
+      backdrop-filter: blur(2px);
+      pointer-events: none;
+      z-index: 80;
+      opacity: 0;
+      animation: brokenFlash .8s ease;
+    }
+    @keyframes brokenFlash {
+      0% { opacity: 0; }
+      30% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="s-hero container">
+    <span class="eyebrow reveal">Interactive · SHA-256</span>
+    <h1 class="reveal delay-1"><span class="grad">Block Mining Simulator</span></h1>
+    <p class="reveal delay-2">See real proof-of-work. Mine two chained blocks in your browser using the Web Crypto API — watch a hash unlock when the nonce is right.</p>
+  </header>
+
+  <main class="container" style="padding-bottom: 60px;">
+    <div class="sim-board reveal">
+      <!-- BLOCK 1 -->
+      <div class="glass block-card" id="block1">
+        <div class="block-header">
+          <div class="block-title">
+            <span class="num-badge">1</span> Block #1
+          </div>
+          <div class="block-status idle" id="status1">
+            <i class="fa-solid fa-circle"></i> Idle
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Block Data</label>
+          <input type="text" id="data1" placeholder='e.g. "Alice → Bob · 2.5 ETH"' value="Genesis Transfer" />
+        </div>
+        <div class="field">
+          <label>Nonce</label>
+          <input type="number" id="nonce1" value="0" min="0" />
+        </div>
+        <div class="field">
+          <label>Previous Hash</label>
+          <div class="readonly" id="prevHash1">0000000000000000</div>
+        </div>
+        <div class="field">
+          <label>Hash (SHA-256)</label>
+          <div class="hash-display empty" id="hash1">— not mined yet —</div>
+        </div>
+        <div class="meta-row">
+          <div class="field">
+            <label>Status</label>
+            <div class="readonly" id="mineStatus1">Awaiting mining…</div>
+          </div>
+          <div class="field">
+            <label>Attempts</label>
+            <div class="readonly" id="attempts1">0</div>
+          </div>
+        </div>
+        <button id="mineBtn1" class="mine-btn">
+          <i class="fa-solid fa-hammer"></i> Mine Block #1
+        </button>
+        <div class="nonce-counter" id="nonceCounter1">Nonce: 0</div>
+      </div>
+
+      <!-- CHAIN LINK -->
+      <div class="chain-mid" id="chainMid">
+        <canvas id="chainCanvas"></canvas>
+        <div class="chain-icon"><i class="fa-solid fa-link"></i></div>
+      </div>
+
+      <!-- BLOCK 2 -->
+      <div class="glass block-card" id="block2">
+        <div class="block-header">
+          <div class="block-title">
+            <span class="num-badge">2</span> Block #2
+          </div>
+          <div class="block-status idle" id="status2">
+            <i class="fa-solid fa-circle"></i> Idle
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Block Data</label>
+          <input type="text" id="data2" placeholder='e.g. "Bob → Carol · 1.0 ETH"' value="Second Transfer" />
+        </div>
+        <div class="field">
+          <label>Nonce</label>
+          <input type="number" id="nonce2" value="0" min="0" />
+        </div>
+        <div class="field">
+          <label>Previous Hash <span style="color:var(--muted); font-size:10px;">(= Block #1 hash)</span></label>
+          <div class="readonly" id="prevHash2">— mine block #1 first —</div>
+        </div>
+        <div class="field">
+          <label>Hash (SHA-256)</label>
+          <div class="hash-display empty" id="hash2">— not mined yet —</div>
+        </div>
+        <div class="meta-row">
+          <div class="field">
+            <label>Status</label>
+            <div class="readonly" id="mineStatus2">Awaiting mining…</div>
+          </div>
+          <div class="field">
+            <label>Attempts</label>
+            <div class="readonly" id="attempts2">0</div>
+          </div>
+        </div>
+        <button id="mineBtn2" class="mine-btn" disabled>
+          <i class="fa-solid fa-hammer"></i> Mine Block #2
+        </button>
+        <div class="nonce-counter" id="nonceCounter2">Nonce: 0</div>
+      </div>
+    </div>
+
+    <!-- INFO STRIP -->
+    <div class="glass reveal mt-32" style="padding:24px 28px; max-width:900px; margin-left:auto; margin-right:auto;">
+      <h3 style="font-family:'Space Grotesk'; font-size:18px; color:var(--cyan); margin-bottom:8px;">
+        <i class="fa-solid fa-circle-info"></i> How this works
+      </h3>
+      <p style="color:var(--muted); font-size:14px; line-height:1.7;">
+        The miner computes <code class="mono">SHA-256(prevHash + data + nonce)</code> over and over, increasing the nonce each time,
+        until the resulting hash starts with <strong style="color:var(--cyan)">"00"</strong> — a tiny proof-of-work.
+        Edit Block&nbsp;#1's data after mining and Block&nbsp;#2 immediately turns red: because its previous-hash no longer matches, the chain is broken.
+      </p>
+    </div>
+  </main>
+
+  <div id="brokenOverlay" class="chain-broken-overlay"></div>
+
+  <footer class="footer container">
+    <p>Built with <span class="heart">♥</span> by <strong>Ch Manoj</strong> · <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> · Batch: <strong>Arbitrum Builder Labs · LamprosDAO</strong></p>
+    <p style="margin-top:6px; font-size:12.5px; opacity:0.7;">ChainVerse © 2025 — A premium Web3 learning experience.</p>
+  </footer>
+
+  <script src="simulator.js" defer></script>
+</body>
+</html>
