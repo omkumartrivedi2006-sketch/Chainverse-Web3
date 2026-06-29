@@ -70,8 +70,8 @@ No installation or build steps are required. You can run ChainVerse locally in s
 
 ## 🤝 Credits & Acknowledgments
 
-Built with ♥ by **Ch Manoj**.
-Supported by **Arbitrum Builder Labs** & **LamprosDAO**.
+Built with ♥ by **Om Trivedi**.
+Supported by **LDRP-ITR**.
 
 > **Learn the primitives. Build the future.**
 
