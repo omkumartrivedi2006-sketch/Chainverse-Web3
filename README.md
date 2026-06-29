@@ -121,3 +121,17 @@ The **Home** page serves as the entry point to the Web3 World. It features a stu
 The **Live Prices** dashboard provides real-time data for major cryptocurrencies like Bitcoin, Ethereum, Solana, and Polygon. It integrates with the CoinGecko API to show live price updates, 24-hour changes, and status indicators in elegant glassmorphism cards.
 
 ![Live Crypto Prices](assets/live_prices.png)
+
+### 4. Block Mining Simulator
+
+The **Simulator** page offers an interactive experience where users can mine blocks in real-time. It demonstrates the **Proof-of-Work** mechanism using SHA-256 hashing, allowing users to see how nonces are adjusted to find a valid hash and how blocks are chained together securely.
+
+![Block Mining Simulator](assets/mining_simulator.png)
+
+---
+
+### Happy Learning! 🚀
+
+Thank you for exploring **ChainVerse**. We hope this platform helps you on your journey to mastering Web3 and blockchain technology. If you have any questions or feedback, feel free to reach out!
+
+**Built with passion for the decentralized future.**
